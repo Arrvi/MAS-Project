@@ -43,23 +43,28 @@ System wspomaga pobór opłat podczas podróży z użyciem bram. Dodatkowo udost
 ## Wymagania funkcjonalne
 
 <img src="./media/image1.png" />
+
 Rysunek 1 Uproszczony diagram przypadków użycia
 
 ## Opis struktury systemu
 
 <img src="./media/image2.png" />
+
 Rysunek 2 Diagram klas (analityczny; pierwotny)
 
 <img src="./media/image3.png" />
+
 Rysunek 3 Diagram klas (implementacyjny; przed analizą dynamiczną)
 
 <img src="./media/image4.png" />
+
 Rysunek 4 Diagram klas (implementacyjny; po analizie dynamicznej - kolorem czerownym zostały oznaczone elementy dodane)
 
 Przypadek użycia "Żądaj otwarcia bramy"
 =======================================
 
 <img src="./media/image5.png" />
+
 Rysunek 5 Diagram przypadku użycia "Żądaj otwarcia bramy"
 
 <table>
@@ -116,16 +121,21 @@ Rysunek 5 Diagram przypadku użycia "Żądaj otwarcia bramy"
 </table>
 
 <img src="./media/image6.png" />
+
 Rysunek 6 Diagram aktywności dla przypadku użycia "Żądaj otwarcia bramy"
 
 ## Analiza dynamiczna
+
 <img src="./media/image7.png" />
+
 Rysunek 7 Diagram interakcji dla przypadku użycia "Żądaj otwarcia bramy"
 
 <img src="./media/image8.png" />
+
 Rysunek 8 Diagram interakcji dla metody `LinkedObject.link(LinkedObject)`
 
 <img src="./media/image9.png" />
+
 Rysunek 9 Diagram stanu dla obiektu klasy `WarpRequest` (Żądanie otwarcia)
 
 ### Założenia analizy dynamicznej
