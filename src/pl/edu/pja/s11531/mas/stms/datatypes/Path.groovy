@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
  *
  * For simplicity composed of points
  */
-class Path implements PersistentObject, DataType {
+class Path extends PersistentObject implements DataType {
     private final List<Offset> points
     private final List<SegmentPosition> segments
     final BigDecimal length

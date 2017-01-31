@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 /**
  * Radiation intensity with type. Misc type.
  */
-class Radiation implements PersistentObject, DataType {
+class Radiation extends PersistentObject implements DataType {
     @NotNull
     final BigDecimal intensity
     @NotNull

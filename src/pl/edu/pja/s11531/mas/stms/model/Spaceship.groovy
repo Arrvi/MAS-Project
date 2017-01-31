@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 /**
  * A registered spaceship.
  */
-class Spaceship implements LinkedObject {
+class Spaceship extends LinkedObject {
     final static BigDecimal SPEED = 1.0
 
     SpaceshipType type

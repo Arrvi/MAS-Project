@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 /**
  * Request for travel between star systems using hyperspace tunnels.
  */
-class WarpRequest implements LinkedObject {
+class WarpRequest extends LinkedObject {
     static final int SHIPS_FOR_DISCOUNT = ConstantManager.SHIPS_FOR_DISCOUNT
 
     Integer discount

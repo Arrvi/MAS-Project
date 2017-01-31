@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 /**
  * Information about a spaceship during jump sequence.
  */
-class SpaceshipWarpRequest implements LinkedObject {
+class SpaceshipWarpRequest extends LinkedObject {
     @NotNull
     Spaceship spaceship
     @NotNull

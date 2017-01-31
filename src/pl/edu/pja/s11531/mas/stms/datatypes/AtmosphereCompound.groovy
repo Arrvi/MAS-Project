@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull
  * Atmosphere compound. Misc type. Pressure is measured in hPa
  * Usually (oxygen, 210), (nitrogen, 800), etc.
  */
-class AtmosphereCompound implements PersistentObject, DataType {
+class AtmosphereCompound extends PersistentObject implements DataType {
     @NotNull
     final String name
     final double pressure

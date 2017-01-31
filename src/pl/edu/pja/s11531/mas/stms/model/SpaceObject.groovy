@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
 /**
  * Any object in space with trackable position. Stationary or on known trajectory
  */
-abstract class SpaceObject implements LinkedObject, ConfigObject {
+abstract class SpaceObject extends LinkedObject implements ConfigObject {
     @NotNull
     Trajectory trajectory
     @NotNull

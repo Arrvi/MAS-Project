@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 /**
  * Report of an event that occurred during jump sequence.
  */
-class EventReport implements LinkedObject {
+class EventReport extends LinkedObject {
     @NotNull
     LocalDateTime time
     @NotNull

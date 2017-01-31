@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 /**
  * Simple BigDecimal 3D vector
  */
-class Offset implements PersistentObject, DataType {
+class Offset extends PersistentObject implements DataType {
     @NotNull
     final BigDecimal x
     @NotNull

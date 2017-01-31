@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull
 /**
  * Spaceship type or model.
  */
-class SpaceshipType implements LinkedObject, ConfigObject {
+class SpaceshipType extends LinkedObject implements ConfigObject {
     @NotNull
     String name
 }
