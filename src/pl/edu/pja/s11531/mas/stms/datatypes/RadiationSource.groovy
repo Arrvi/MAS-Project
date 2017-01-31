@@ -1,14 +1,20 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import javax.validation.constraints.NotNull
+
 /**
  * Radiation source. Misc type.
  */
 class RadiationSource extends Radiation {
-    RadiationSource(BigDecimal intensity, Type type) {
+    RadiationSource(@NotNull BigDecimal intensity, @NotNull Type type) {
         super(intensity, type)
     }
 
-    BigDecimal calculateRadiationAt(BigDecimal distance) {
+    RadiationSource(@NotNull Radiation radiation) {
+        super(radiation)
+    }
+
+    BigDecimal calculateRadiationAt(@NotNull BigDecimal distance) {
         intensity / distance**2
     }
 }

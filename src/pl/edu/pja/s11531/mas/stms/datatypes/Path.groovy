@@ -1,16 +1,22 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import pl.edu.pja.s11531.mas.stms.persistence.PersistentObject
+
+import javax.validation.constraints.NotNull
+
 /**
  * Some path in space.
  *
  * For simplicity composed of points
  */
-class Path implements Serializable {
+class Path implements PersistentObject, DataType {
     private final List<Offset> points
     private final List<SegmentPosition> segments
     final BigDecimal length
 
-    Path(List<Offset> points) {
+    Path(@NotNull List<Offset> points) {
+        if (points.size() < 2) throw new IllegalArgumentException("Path consists of at least 2 points");
+
         this.points = Collections.unmodifiableList(points)
         BigDecimal distanceSum = 0.0
         Offset lastPoint = null

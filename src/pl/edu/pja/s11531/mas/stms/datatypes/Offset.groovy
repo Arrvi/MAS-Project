@@ -1,20 +1,27 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import pl.edu.pja.s11531.mas.stms.persistence.PersistentObject
+
+import javax.validation.constraints.NotNull
+
 /**
  * Simple BigDecimal 3D vector
  */
-class Offset implements Serializable {
+class Offset implements PersistentObject, DataType {
+    @NotNull
     final BigDecimal x
+    @NotNull
     final BigDecimal y
+    @NotNull
     final BigDecimal z
 
-    Offset(BigDecimal x, BigDecimal y, BigDecimal z) {
+    Offset(@NotNull BigDecimal x, @NotNull BigDecimal y, @NotNull BigDecimal z) {
         this.x = x
         this.y = y
         this.z = z
     }
 
-    Offset(Offset offset) {
+    Offset(@NotNull Offset offset) {
         this.x = offset.x
         this.y = offset.y
         this.z = offset.z
