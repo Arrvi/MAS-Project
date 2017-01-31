@@ -1,7 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.model
 
 /**
- * Created by kris on 1/31/17.
+ * Group of objects orbiting around some star.
  */
 class StarSystem extends SpaceObject {
 }

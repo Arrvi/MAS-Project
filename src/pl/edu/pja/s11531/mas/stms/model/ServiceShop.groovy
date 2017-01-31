@@ -1,7 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.model
 
 /**
- * Created by kris on 1/31/17.
+ * Repair station for spaceships
  */
 class ServiceShop extends PointOfInterest {
 }

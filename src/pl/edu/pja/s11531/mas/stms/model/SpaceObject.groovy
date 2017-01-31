@@ -4,7 +4,7 @@ import pl.edu.pja.s11531.mas.stms.persistence.ConfigObject
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
 
 /**
- * Created by kris on 1/31/17.
+ * Any object in space with trackable position. Stationary or on known trajectory
  */
 abstract class SpaceObject implements LinkedObject, ConfigObject {
 }

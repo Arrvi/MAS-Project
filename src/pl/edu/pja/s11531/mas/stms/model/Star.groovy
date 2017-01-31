@@ -1,7 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.model
 
 /**
- * Created by kris on 1/31/17.
+ * Large ball of fire. Usually quite bright and hot. It is advised not to fly nearby.
  */
 class Star extends SpaceObject {
 }

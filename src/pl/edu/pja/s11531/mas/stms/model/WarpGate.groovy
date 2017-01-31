@@ -1,6 +1,6 @@
 package pl.edu.pja.s11531.mas.stms.model
 /**
- * Created by kris on 1/31/17.
+ * A building capable of creating hyperspace tunnel openings. Always linked in pairs.
  */
 class WarpGate extends Building {
 }

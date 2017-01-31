@@ -4,7 +4,7 @@ import pl.edu.pja.s11531.mas.stms.persistence.ConfigObject
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
 
 /**
- * Created by kris on 1/31/17.
+ * Spaceship type or model.
  */
 class SpaceshipType implements LinkedObject, ConfigObject {
 }

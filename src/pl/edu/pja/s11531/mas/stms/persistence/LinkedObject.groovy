@@ -1,4 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.persistence
 
-trait LinkedObject {
+/**
+ * Association and link support.
+ */
+trait LinkedObject extends PersistentObject {
 }

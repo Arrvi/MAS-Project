@@ -1,7 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.model
 
 /**
- * Created by kris on 1/31/17.
+ * Man-made object with transportation system purpose and trackable position.
  */
 abstract class Building extends SpaceObject {
 }
