@@ -9,6 +9,8 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+
 //    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 }
 
