@@ -1,8 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
 import javax.validation.constraints.NotNull
-import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 
 /**
  * Created by kris on 1/30/17.
@@ -13,16 +13,16 @@ class TimedPath implements Serializable {
     @NotNull
     final LocalDateTime timeZero
     @NotNull
-    final Duration cycleDuration
+    final Period cycleDuration
 
-    TimedPath(@NotNull Path path, @NotNull LocalDateTime timeZero, @NotNull Duration cycleDuration) {
+    TimedPath(@NotNull Path path, @NotNull LocalDateTime timeZero, @NotNull Period cycleDuration) {
         this.path = path
         this.timeZero = timeZero
         this.cycleDuration = cycleDuration
     }
 
     Offset getPointAt(@NotNull LocalDateTime time) {
-        def currCycleTime = Duration.between(timeZero, time)
+        def currCycleTime = Period.between(timeZero.toLocalDate(), time.toLocalDate())
         if (currCycleTime.isNegative()) {
             while (currCycleTime.isNegative()) {
                 currCycleTime += cycleDuration
@@ -35,17 +35,7 @@ class TimedPath implements Serializable {
         return path.getPointAt(getDurationRatio(currCycleTime, cycleDuration))
     }
 
-    private static double getDurationRatio(@NotNull Duration numerator, @NotNull Duration denominator) {
-        try {
-            return numerator.toNanos() / denominator.toNanos()
-        } catch (ArithmeticException ignored) {
-
-        }
-        try {
-            return numerator.toMillis() / denominator.toMillis()
-        } catch (ArithmeticException ignored) {
-
-        }
-        return numerator.getSeconds() / denominator.getSeconds()
+    private static double getDurationRatio(@NotNull Period numerator, @NotNull Period denominator) {
+        return numerator.getDays() / denominator.getDays()
     }
 }

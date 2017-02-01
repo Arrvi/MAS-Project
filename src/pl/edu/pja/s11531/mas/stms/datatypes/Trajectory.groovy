@@ -9,10 +9,9 @@ import java.time.LocalDateTime
 class Trajectory implements Serializable {
     @NotNull
     final TimedPath path
-    @NotNull
     final Trajectory parent
 
-    Trajectory(@NotNull TimedPath path, @NotNull Trajectory parent) {
+    Trajectory(@NotNull TimedPath path, Trajectory parent) {
         this.path = path
         this.parent = parent
     }

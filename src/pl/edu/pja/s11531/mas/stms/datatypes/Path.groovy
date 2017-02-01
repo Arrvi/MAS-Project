@@ -1,7 +1,5 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
-import pl.edu.pja.s11531.mas.stms.persistence.PersistentObject
-
 import javax.validation.constraints.NotNull
 
 /**
@@ -9,7 +7,7 @@ import javax.validation.constraints.NotNull
  *
  * For simplicity composed of points
  */
-class Path extends PersistentObject implements DataType {
+class Path implements DataType {
     private final List<Offset> points
     private final List<SegmentPosition> segments
     final BigDecimal length
@@ -31,6 +29,10 @@ class Path extends PersistentObject implements DataType {
         }
         this.length = distanceSum
         this.segments = Collections.unmodifiableList(segments)
+    }
+
+    static Path of(List<BigDecimal>... coords) {
+        new Path(coords.collect { new Offset(it[0], it[1], it[2]) })
     }
 
     /**

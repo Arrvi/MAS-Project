@@ -1,13 +1,11 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
-import pl.edu.pja.s11531.mas.stms.persistence.PersistentObject
-
 import javax.validation.constraints.NotNull
 
 /**
  * Simple BigDecimal 3D vector
  */
-class Offset extends PersistentObject implements DataType {
+class Offset implements DataType {
     @NotNull
     final BigDecimal x
     @NotNull

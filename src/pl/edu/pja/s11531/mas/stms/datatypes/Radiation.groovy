@@ -1,13 +1,11 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
-import pl.edu.pja.s11531.mas.stms.persistence.PersistentObject
-
 import javax.validation.constraints.NotNull
 
 /**
  * Radiation intensity with type. Misc type.
  */
-class Radiation extends PersistentObject implements DataType {
+class Radiation implements DataType {
     @NotNull
     final BigDecimal intensity
     @NotNull

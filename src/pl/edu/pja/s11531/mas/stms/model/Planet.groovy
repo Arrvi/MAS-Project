@@ -9,4 +9,9 @@ class Planet extends StarSystemObject {
     final Set<AtmosphereCompound> atmosphereCompounds = new HashSet<>()
     double radius
     double mass
+
+    void setAtmosphereCompounds(Collection<AtmosphereCompound> compounds) {
+        atmosphereCompounds.clear()
+        atmosphereCompounds.addAll(compounds)
+    }
 }
