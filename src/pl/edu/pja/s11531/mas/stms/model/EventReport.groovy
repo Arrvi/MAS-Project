@@ -1,5 +1,6 @@
 package pl.edu.pja.s11531.mas.stms.model
 
+import pl.edu.pja.s11531.mas.stms.persistence.DatabaseObject
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
 
 import javax.validation.constraints.NotNull
@@ -8,7 +9,7 @@ import java.time.LocalDateTime
 /**
  * Report of an event that occurred during jump sequence.
  */
-class EventReport extends LinkedObject {
+class EventReport extends LinkedObject implements DatabaseObject {
     @NotNull
     LocalDateTime time
     @NotNull

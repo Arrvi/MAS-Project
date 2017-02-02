@@ -4,14 +4,14 @@ package pl.edu.pja.s11531.mas.stms.persistence
  * Global provider for constants. They are retrieved from static file.
  */
 final class ConstantsProvider {
-    private static final String PROPERTIES_PATH = "constants.properties"
+    private static final String PROPERTIES_PATH = "res/constants.properties"
     private static ConstantsProvider instance
-    private Properties properties = new Properties()
+    private Properties constants = new Properties()
 
     private ConstantsProvider() {
         File propertiesFile = new File(PROPERTIES_PATH)
         propertiesFile.withInputStream {
-            properties.load(it)
+            constants.load(it)
         }
     }
 
@@ -23,6 +23,6 @@ final class ConstantsProvider {
     }
 
     static $static_propertyMissing(String name) {
-        instance.properties.getProperty(name)
+        getInstance().constants.get(name)
     }
 }

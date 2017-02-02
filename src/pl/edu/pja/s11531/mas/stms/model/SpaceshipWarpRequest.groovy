@@ -1,5 +1,6 @@
 package pl.edu.pja.s11531.mas.stms.model
 
+import pl.edu.pja.s11531.mas.stms.persistence.DatabaseObject
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
 
 import javax.validation.constraints.NotNull
@@ -7,7 +8,7 @@ import javax.validation.constraints.NotNull
 /**
  * Information about a spaceship during jump sequence.
  */
-class SpaceshipWarpRequest extends LinkedObject {
+class SpaceshipWarpRequest extends LinkedObject implements DatabaseObject {
     @NotNull
     Spaceship spaceship
     @NotNull

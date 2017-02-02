@@ -1,9 +1,7 @@
 package pl.edu.pja.s11531.mas.stms
 
 import pl.edu.pja.s11531.mas.stms.datatypes.Distance
-import pl.edu.pja.s11531.mas.stms.model.Planet
-import pl.edu.pja.s11531.mas.stms.model.Star
-import pl.edu.pja.s11531.mas.stms.model.StarSystem
+import pl.edu.pja.s11531.mas.stms.model.*
 
 import static pl.edu.pja.s11531.mas.stms.DataTypeFactory.*
 
@@ -28,5 +26,13 @@ class ModelObjectFactory {
                 mass: 1000000000000000000000,
                 atmosphereCompounds: [oxygen(), nitrogen()]
         )
+    }
+
+    static SpaceshipType spaceshipType() {
+        new SpaceshipType(name: "Test type")
+    }
+
+    static Spaceship spaceship() {
+        new Spaceship(name: "Test ship", mass: 1000, currentCaptain: "Test captain", currentOwner: "Test owner", type: spaceshipType())
     }
 }

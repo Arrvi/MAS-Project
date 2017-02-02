@@ -103,10 +103,16 @@ abstract class LinkedObject {
         return node
     }
 
-    static String serializeExtentToJson() {
+    static String serializeExtentToJson(Class targetClass = null) {
         def factory = new JsonNodeFactory(false)
         ArrayNode jsonExtent = factory.arrayNode()
-        extent.values().each { it.each { jsonExtent.add(it.getJsonNode(factory)) } }
+        extent.values()
+                .each
+                {
+                    it
+                            .findAll { targetClass == null || targetClass.isInstance(it) }
+                            .each { jsonExtent.add(it.getJsonNode(factory)) }
+                }
 
         ObjectMapper mapper = new ObjectMapper()
         return mapper.writeValueAsString(jsonExtent)
