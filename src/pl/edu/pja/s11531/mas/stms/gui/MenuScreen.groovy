@@ -21,6 +21,10 @@ class MenuScreen extends NamedScreen {
     @SuppressWarnings("GroovyAssignabilityCheck")
     void buildGUI(SwingBuilder builder) {
         builder.edt {
+            this.add panel {
+                label "<html><big>Action hub</big>"
+            }, BorderLayout.NORTH
+
             this.add panel(preferredSize: [350, 0]) {
                 flowLayout()
 

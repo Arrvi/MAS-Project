@@ -11,6 +11,7 @@ import javax.swing.*
 @InheritConstructors
 abstract class NamedScreen extends JPanel {
     final String screenName = this.class.name
+    protected MainWindow window
 
     abstract void buildGUI(SwingBuilder builder)
 }
