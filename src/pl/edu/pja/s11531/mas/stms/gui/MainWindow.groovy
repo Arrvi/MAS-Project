@@ -1,7 +1,10 @@
 package pl.edu.pja.s11531.mas.stms.gui
 
 import groovy.swing.SwingBuilder
-import pl.edu.pja.s11531.mas.stms.gui.requests.create.WaypointChooser
+import pl.edu.pja.s11531.mas.stms.gui.requests.RequestListScreen
+import pl.edu.pja.s11531.mas.stms.gui.requests.create.RequestSummaryScreen
+import pl.edu.pja.s11531.mas.stms.gui.requests.create.ShipChooserScreen
+import pl.edu.pja.s11531.mas.stms.gui.requests.create.WaypointChooserScreen
 
 import javax.swing.*
 import java.awt.*
@@ -15,7 +18,10 @@ class MainWindow {
     CardLayout cards
 
     MenuScreen menuScreen
-    WaypointChooser waypointChooser
+    WaypointChooserScreen waypointChooser
+    ShipChooserScreen shipChooser
+    RequestSummaryScreen requestSummary
+    RequestListScreen requestList
 
     MainWindow() {
         buildGUI()
@@ -25,19 +31,25 @@ class MainWindow {
         builder.edt {
             lookAndFeel UIManager.getSystemLookAndFeelClassName()
 
-            menuScreen = new MenuScreen(this)
-            waypointChooser = new WaypointChooser(this)
+            def screens = [
+                    menuScreen = new MenuScreen(this),
+                    waypointChooser = new WaypointChooserScreen(this),
+                    shipChooser = new ShipChooserScreen(this),
+                    requestSummary = new RequestSummaryScreen(this),
+                    requestList = new RequestListScreen(this)
+            ]
+
+            screens*.buildGUI(builder)
 
             mainFrame = frame(
                     title: 'Space Traffic Management System',
                     size: [1000, 600],
                     locationRelativeTo: null,
                     show: true,
-                    defaultCloseOperation: WindowConstants.EXIT_ON_CLOSE) {
+                    defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE) {
                 cards = cardLayout()
 
-                builder.panel(constraints: menuScreen.screenName, menuScreen)
-                builder.panel(constraints: waypointChooser.screenName, waypointChooser)
+                screens.each { builder.panel(constraints: it.screenName, it) }
             }
         }
     }
