@@ -1,6 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.persistence
 
 import pl.edu.pja.s11531.mas.stms.ModelObjectFactory
+import pl.edu.pja.s11531.mas.stms.model.Spaceship
 import spock.lang.Specification
 
 class LinkedObjectTest extends Specification {
@@ -46,7 +47,6 @@ class LinkedObjectTest extends Specification {
                 '"currentCaptain":"Test captain",' +
                 '"currentOwner":"Test owner",' +
                 '"id":"' + spaceShip.id + '",' +
-                '"SPEED":10.0,' +
                 '"name":"Test ship",' +
                 '"mass":1000.0},' +
                 '"links":{"type":"' + spaceShip.type.id + '"}}]'
@@ -68,5 +68,21 @@ class LinkedObjectTest extends Specification {
         json1 != null
         json2 != null
         json1 != json2
+    }
+
+    def "serialized object can be deserialized"() {
+        setup:
+        def starSystem = ModelObjectFactory.starSystem()
+        def star = ModelObjectFactory.star(starSystem)
+        def planet = ModelObjectFactory.planet(starSystem)
+        def spaceShip = ModelObjectFactory.spaceship()
+
+        when:
+        def json = LinkedObject.serializeExtentToJson()
+        LinkedObject.clearExtent()
+        LinkedObject.unserializeJson(json)
+
+        then:
+        !LinkedObject.getExtent(Spaceship.class).empty
     }
 }

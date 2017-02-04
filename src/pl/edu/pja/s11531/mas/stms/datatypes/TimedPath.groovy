@@ -1,5 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 import java.time.LocalDateTime
 import java.time.Period
@@ -15,7 +18,11 @@ class TimedPath implements Serializable {
     @NotNull
     final Period cycleDuration
 
-    TimedPath(@NotNull Path path, @NotNull LocalDateTime timeZero, @NotNull Period cycleDuration) {
+    @JsonCreator
+    TimedPath(
+            @JsonProperty('path') @NotNull Path path,
+            @JsonProperty('timeZero') @NotNull LocalDateTime timeZero,
+            @JsonProperty('cycleDuration') @NotNull Period cycleDuration) {
         this.path = path
         this.timeZero = timeZero
         this.cycleDuration = cycleDuration

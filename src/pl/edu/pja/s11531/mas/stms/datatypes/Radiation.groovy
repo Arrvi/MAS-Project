@@ -1,5 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 
 /**
@@ -11,7 +14,10 @@ class Radiation implements DataType {
     @NotNull
     final Type type
 
-    Radiation(@NotNull BigDecimal intensity, @NotNull Type type) {
+    @JsonCreator
+    Radiation(
+            @JsonProperty('intensity') @NotNull BigDecimal intensity,
+            @JsonProperty('type') @NotNull Type type) {
         this.intensity = intensity
         this.type = type
     }

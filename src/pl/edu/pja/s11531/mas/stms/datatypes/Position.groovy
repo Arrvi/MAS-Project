@@ -1,5 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 import java.time.LocalDateTime
 
@@ -11,7 +14,12 @@ import java.time.LocalDateTime
 class Position extends Offset {
     final LocalDateTime time
 
-    Position(@NotNull BigDecimal x, @NotNull BigDecimal y, @NotNull BigDecimal z, @NotNull LocalDateTime time) {
+    @JsonCreator
+    Position(
+            @JsonProperty('x') @NotNull BigDecimal x,
+            @JsonProperty('y') @NotNull BigDecimal y,
+            @JsonProperty('z') @NotNull BigDecimal z,
+            @JsonProperty('time') @NotNull LocalDateTime time) {
         super(x, y, z)
         this.time = time
     }

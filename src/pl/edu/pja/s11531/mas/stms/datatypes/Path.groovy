@@ -1,5 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 
 /**
@@ -8,11 +11,12 @@ import javax.validation.constraints.NotNull
  * For simplicity composed of points
  */
 class Path implements DataType {
-    private final List<Offset> points
+    final List<Offset> points
     private final List<SegmentPosition> segments
     final BigDecimal length
 
-    Path(@NotNull List<Offset> points) {
+    @JsonCreator
+    Path(@JsonProperty('points') @NotNull List<Offset> points) {
         if (points.size() < 2) throw new IllegalArgumentException("Path consists of at least 2 points");
 
         this.points = Collections.unmodifiableList(points)

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
 import java.lang.reflect.Field
 
@@ -19,16 +21,17 @@ abstract class LinkedObject {
      */
     private static Map<Class<? extends LinkedObject>, List<LinkedObject>> extent = [:].withDefault { [] };
 
-    private Map<Field, String> serializedLinks = [:]
-
+    private static boolean autoIncrementId = true;
     private static int lastId = 0;
-    private int id
+    protected int _id
 
     /**
      * Base constructor. Adds object to extent.
      */
     LinkedObject() {
-        id = ++lastId
+        if (autoIncrementId) {
+            _id = ++lastId
+        }
         addObject this
     }
 
@@ -76,7 +79,13 @@ abstract class LinkedObject {
     }
 
     String getId() {
-        "${this.class.simpleName}.$id"
+        "${this.class.simpleName}.$_id"
+    }
+
+    void setId(String id) {
+        def segments = id.split("\\.")
+        if (segments[0] != this.class.simpleName) throw new IllegalArgumentException("Setting id of different class");
+        _id = Integer.parseInt(segments[1])
     }
 
     JsonNode getJsonNode(JsonNodeFactory factory) {
@@ -90,6 +99,7 @@ abstract class LinkedObject {
     JsonNode getFieldsNode(JsonNodeFactory factory) {
         ObjectNode node = factory.objectNode()
         this.getProperties()
+                .findAll { String k, v -> !k.matches("[A-Z][A-Z_]+") }
                 .findAll { k, v -> !(v instanceof LinkedObject || v instanceof Class) }
                 .each { String k, Object v -> node.set k, factory.pojoNode(v) }
         return node
@@ -115,6 +125,66 @@ abstract class LinkedObject {
                 }
 
         ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
         return mapper.writeValueAsString(jsonExtent)
+    }
+
+    static void unserializeJson(String json) {
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+        def nodes = mapper.readTree(json) as ArrayNode
+        println "Tree read"
+
+
+        nodes.elements().each { ObjectNode node ->
+            println "Reading object: $node"
+            def className = (node.get('class') as TextNode).asText()
+            def instance = LinkedObject.class.classLoader.loadClass(className)?.newInstance() as LinkedObject
+            assert instance != null
+
+            println "Got instance of $className: $instance"
+
+            def fields = node.get('fields') as ObjectNode
+            fields.fieldNames().findAll { it != 'id' }.each { String name ->
+                println "Loading field $name: ${fields.get(name)}"
+                Class fieldType = getPropertyType(instance.class, name)
+                if (fieldType == null) {
+                    throw new IllegalArgumentException("Cannot determine field's type: $name");
+                }
+                instance.setProperty(name, mapper.treeToValue(fields.get(name), fieldType))
+            }
+            instance.id = node.get('id').asText()
+        }
+
+        Map<String, LinkedObject> instanceMap = [:]
+        extent.values().each {
+            it.each {
+                instanceMap[it.getId()] = it
+            }
+        }
+
+        nodes.elements().each { Object node ->
+            String id = node.get('id').asText()
+            def instance = instanceMap[id]
+            def links = node.get('links') as ObjectNode
+            links.fieldNames().each { String name ->
+                instance.setProperty(name, instanceMap[links.get(name).asText()])
+            }
+        }
+
+        println "Deserialized successfully: $extent"
+    }
+
+    private static Class getPropertyType(Class cls, String name) {
+        if (cls == Object.class) return null;
+        Field field = null
+        try {
+            field = cls.getDeclaredField(name)
+        } catch (NoSuchFieldException ignored) {
+        }
+        if (field == null) {
+            return getPropertyType(cls.superclass, name)
+        }
+        return field.type
     }
 }

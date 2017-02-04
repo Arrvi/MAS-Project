@@ -1,5 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 import java.time.LocalDateTime
 
@@ -11,7 +14,10 @@ class Trajectory implements Serializable {
     final TimedPath path
     final Trajectory parent
 
-    Trajectory(@NotNull TimedPath path, Trajectory parent) {
+    @JsonCreator
+    Trajectory(
+            @JsonProperty('path') @NotNull TimedPath path,
+            @JsonProperty('parent') Trajectory parent) {
         this.path = path
         this.parent = parent
     }

@@ -9,4 +9,8 @@ import pl.edu.pja.s11531.mas.stms.datatypes.RadiationSource
 class Star extends StarSystemObject {
     double mass
     final Map<Radiation.Type, RadiationSource> radiation = new HashMap<>()
+
+    void setRadiation(Map<Radiation.Type, RadiationSource> radiation) {
+        this.radiation.putAll(radiation)
+    }
 }

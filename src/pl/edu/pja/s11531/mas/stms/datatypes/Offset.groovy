@@ -1,10 +1,15 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
+
 import javax.validation.constraints.NotNull
 
 /**
  * Simple BigDecimal 3D vector
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Offset implements DataType {
     @NotNull
     final BigDecimal x
@@ -13,7 +18,11 @@ class Offset implements DataType {
     @NotNull
     final BigDecimal z
 
-    Offset(@NotNull BigDecimal x, @NotNull BigDecimal y, @NotNull BigDecimal z) {
+    @JsonCreator
+    Offset(
+            @JsonProperty('x') @NotNull BigDecimal x,
+            @JsonProperty('y') @NotNull BigDecimal y,
+            @JsonProperty('z') @NotNull BigDecimal z) {
         this.x = x
         this.y = y
         this.z = z
