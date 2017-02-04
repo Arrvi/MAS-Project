@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
 import java.lang.reflect.Field
 
@@ -113,7 +112,7 @@ abstract class LinkedObject {
         return node
     }
 
-    static String serializeExtentToJson(Class targetClass = null) {
+    static ArrayNode serializeExtentToJson(Class targetClass = null) {
         def factory = new JsonNodeFactory(false)
         ArrayNode jsonExtent = factory.arrayNode()
         extent.values()
@@ -124,18 +123,10 @@ abstract class LinkedObject {
                             .each { jsonExtent.add(it.getJsonNode(factory)) }
                 }
 
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-        return mapper.writeValueAsString(jsonExtent)
+        return jsonExtent
     }
 
-    static void unserializeJson(String json) {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-        def nodes = mapper.readTree(json) as ArrayNode
-        println "Tree read"
-
-
+    static void unserializeJson(ArrayNode nodes, ObjectMapper mapper) {
         nodes.elements().each { ObjectNode node ->
             println "Reading object: $node"
             def className = (node.get('class') as TextNode).asText()

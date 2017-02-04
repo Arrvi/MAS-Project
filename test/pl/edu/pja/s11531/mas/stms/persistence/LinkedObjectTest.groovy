@@ -1,5 +1,6 @@
 package pl.edu.pja.s11531.mas.stms.persistence
 
+import com.fasterxml.jackson.databind.node.ArrayNode
 import pl.edu.pja.s11531.mas.stms.ModelObjectFactory
 import pl.edu.pja.s11531.mas.stms.model.Spaceship
 import spock.lang.Specification
@@ -17,7 +18,7 @@ class LinkedObjectTest extends Specification {
         def spaceShip = ModelObjectFactory.spaceship()
 
         when:
-        def json = LinkedObject.serializeExtentToJson()
+        def json = PersistenceManager.mapper.writeValueAsString(LinkedObject.serializeExtentToJson())
 
         then:
         json != null
@@ -31,7 +32,7 @@ class LinkedObjectTest extends Specification {
         def spaceShip = ModelObjectFactory.spaceship()
 
         when:
-        def json = LinkedObject.serializeExtentToJson()
+        def json = PersistenceManager.mapper.writeValueAsString(LinkedObject.serializeExtentToJson())
 
         then:
         json == '[{' +
@@ -61,8 +62,8 @@ class LinkedObjectTest extends Specification {
         def spaceShip = ModelObjectFactory.spaceship()
 
         when:
-        def json1 = LinkedObject.serializeExtentToJson(DatabaseObject.class)
-        def json2 = LinkedObject.serializeExtentToJson(ConfigObject.class)
+        def json1 = PersistenceManager.mapper.writeValueAsString(LinkedObject.serializeExtentToJson(DatabaseObject.class))
+        def json2 = PersistenceManager.mapper.writeValueAsString(LinkedObject.serializeExtentToJson(ConfigObject.class))
 
         then:
         json1 != null
@@ -78,9 +79,9 @@ class LinkedObjectTest extends Specification {
         def spaceShip = ModelObjectFactory.spaceship()
 
         when:
-        def json = LinkedObject.serializeExtentToJson()
+        def json = PersistenceManager.mapper.writeValueAsString(LinkedObject.serializeExtentToJson())
         LinkedObject.clearExtent()
-        LinkedObject.unserializeJson(json)
+        LinkedObject.unserializeJson(PersistenceManager.mapper.readTree(json) as ArrayNode, PersistenceManager.mapper)
 
         then:
         !LinkedObject.getExtent(Spaceship.class).empty
