@@ -26,6 +26,11 @@ class MainWindow {
 
     MainWindow() {
         PersistenceManager.loadConfig()
+        try {
+            PersistenceManager.loadDatabase()
+        } catch (IOException ignored) {
+            println "Cannot load local database. Using empty extent."
+        }
         buildGUI()
     }
 
