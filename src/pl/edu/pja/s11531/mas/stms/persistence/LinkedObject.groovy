@@ -149,13 +149,11 @@ abstract class LinkedObject {
     static ArrayNode serializeExtentToJson(Class targetClass = null) {
         def factory = new JsonNodeFactory(false)
         ArrayNode jsonExtent = factory.arrayNode()
-        extent.values()
-                .each
-                {
-                    it
-                            .findAll { targetClass == null || targetClass.isInstance(it) }
-                            .each { jsonExtent.add(it.getJsonNode(factory)) }
-                }
+        new HashMap<Class<? extends LinkedObject>, List<LinkedObject>>(extent).each { k, v ->
+            v.findAll { targetClass == null || targetClass.isInstance(it) }.each {
+                jsonExtent.add(it.getJsonNode(factory))
+            }
+        }
 
         return jsonExtent
     }

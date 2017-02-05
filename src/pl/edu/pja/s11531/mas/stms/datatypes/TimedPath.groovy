@@ -28,6 +28,10 @@ class TimedPath implements Serializable {
         this.cycleDuration = cycleDuration
     }
 
+    static TimedPath stationary(Position position) {
+        return new TimedPath(new Path([position, position]), position.time, Period.of(1, 0, 0))
+    }
+
     Offset getPointAt(@NotNull LocalDateTime time) {
         def currCycleTime = Period.between(timeZero.toLocalDate(), time.toLocalDate())
         if (currCycleTime.isNegative()) {
