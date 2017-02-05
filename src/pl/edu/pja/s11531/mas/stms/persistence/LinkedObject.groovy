@@ -130,7 +130,7 @@ abstract class LinkedObject {
         def ignoredProperties = getIgnoredProperties(this.class)
         this.getProperties()
                 .findAll { String k, v -> !(k.matches("[A-Z][A-Z_]+") || ignoredProperties.contains(k)) }
-                .findAll { k, v -> !(v instanceof LinkedObject || v instanceof Class) }
+                .findAll { k, v -> !(v instanceof Class || isLinkValue(v)) }
                 .each { String k, Object v -> node.set k, factory.pojoNode(v) }
         return node
     }
@@ -141,9 +141,35 @@ abstract class LinkedObject {
         def ignoredProperties = getIgnoredProperties(this.class)
         this.getProperties()
                 .findAll { String k, v -> !ignoredProperties.contains(k) }
-                .findAll { k, v -> v instanceof LinkedObject }
-                .each { String k, LinkedObject v -> node.set k, factory.textNode(v.getId()) }
+                .findAll { k, v -> isLinkValue(v) }
+                .each { String k, v -> node.set k, getLinkNode(factory, v) }
         return node
+    }
+
+    JsonNode getLinkNode(JsonNodeFactory factory, Object obj) {
+        if (obj instanceof LinkedObject) {
+            return factory.textNode(obj.getId())
+        }
+        if (obj instanceof Collection) {
+            ArrayNode node = factory.arrayNode()
+            obj.each { node.add(getLinkNode(factory, it)) }
+            return node
+        }
+        throw new IllegalArgumentException("Invalid link type");
+    }
+
+    protected static boolean isLinkValue(def obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof LinkedObject) {
+            return true
+        }
+        if (obj instanceof Collection) {
+            if (obj.size() == 0) return false;
+            return isLinkValue(obj.iterator().next())
+        }
+        return false;
     }
 
     static ArrayNode serializeExtentToJson(Class targetClass = null) {
@@ -192,7 +218,16 @@ abstract class LinkedObject {
             def instance = instanceMap[id]
             def links = node.get('links') as ObjectNode
             links.fieldNames().each { String name ->
-                instance.setProperty(name, instanceMap[links.get(name).asText()])
+                def link = links.get(name)
+                if (link instanceof TextNode) {
+                    instance.setProperty(name, instanceMap[link.asText()])
+                } else if (link instanceof ArrayNode) {
+                    List<LinkedObject> instances = []
+                    link.each { instances.add(instanceMap[it.asText()]) }
+                    instance.setProperty(name, instances)
+                } else {
+                    throw new IllegalArgumentException("Unsupported link format: ${link.class}")
+                }
             }
         }
 

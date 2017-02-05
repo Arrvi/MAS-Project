@@ -35,4 +35,13 @@ class ModelObjectFactory {
     static Spaceship spaceship() {
         new Spaceship(name: "Test ship", mass: 1000, currentCaptain: "Test captain", currentOwner: "Test owner", type: spaceshipType())
     }
+
+    static ServiceShop serviceShop() {
+        new ServiceShop(
+                name: "Test serviceShop",
+                trajectory: trajectory(staticTrajectory()),
+                supportedShipTypes: [spaceshipType(), spaceshipType()],
+                locationType: PointOfInterest.LocationType.ON_ORBIT
+        )
+    }
 }
