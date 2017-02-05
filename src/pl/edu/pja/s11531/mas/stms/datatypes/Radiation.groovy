@@ -9,10 +9,19 @@ import javax.validation.constraints.NotNull
  * Radiation intensity with type. Misc type.
  */
 class Radiation implements DataType {
+    /**
+     * Approximate intensity of radiation resulting in death of adult human.
+     */
     static final BigDecimal FATAL_INTENSITY = 100.0
 
+    /**
+     * Intensity of this radiation in some arbitrary unit
+     */
     @NotNull
     final BigDecimal intensity
+    /**
+     * Type of this radiation. Does not really matter.
+     */
     @NotNull
     final Type type
 

@@ -10,8 +10,14 @@ import javax.validation.constraints.NotNull
  * Usually (oxygen, 210), (nitrogen, 800), etc.
  */
 class AtmosphereCompound implements DataType {
+    /**
+     * Name of this compound in common english with no capitals
+     */
     @NotNull
     final String name
+    /**
+     * Pressure of this compound in atmosphere. Measured in hPa
+     */
     final double pressure
 
     @JsonCreator

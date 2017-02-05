@@ -20,6 +20,11 @@ class RadiationSource extends Radiation {
         super(radiation)
     }
 
+    /**
+     * Calculates radiation intensity at given distance from source
+     * @param distance distance from source in AU
+     * @return intensity in arbitrary unit
+     */
     BigDecimal calculateRadiationAt(@NotNull BigDecimal distance) {
         intensity / distance**2
     }

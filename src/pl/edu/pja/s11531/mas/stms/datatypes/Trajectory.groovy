@@ -10,8 +10,14 @@ import java.time.LocalDateTime
  * Trajectory of a celestial body. Can be relative (for example moon orbit to a planet, while planet has orbit relative to star).
  */
 class Trajectory implements Serializable {
+    /**
+     * Path of this trajectory.
+     */
     @NotNull
     final TimedPath path
+    /**
+     * Parent of this trajectory. Its position is used as reference point for calculation. Null means [0,0,0] reference point.
+     */
     final Trajectory parent
 
     @JsonCreator
@@ -22,6 +28,11 @@ class Trajectory implements Serializable {
         this.parent = parent
     }
 
+    /**
+     * Calculates position of this trajectory at given time. Positions of parent trajectories are taken into account.
+     * @param time
+     * @return
+     */
     Position calculatePosition(@NotNull LocalDateTime time) {
         return new Position(calculateOffset(time), time)
     }

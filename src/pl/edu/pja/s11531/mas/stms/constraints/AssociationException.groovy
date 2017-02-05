@@ -3,7 +3,7 @@ package pl.edu.pja.s11531.mas.stms.constraints
 import groovy.transform.InheritConstructors
 
 /**
- * Triggered when there's association rule violation
+ * Thrown when there's association rule violation
  */
 @InheritConstructors
 class AssociationException extends ModelConstraintException {

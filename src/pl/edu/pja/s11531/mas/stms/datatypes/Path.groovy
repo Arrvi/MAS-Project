@@ -9,13 +9,20 @@ import javax.validation.constraints.NotNull
 /**
  * Some path in space.
  *
- * For simplicity composed of points
+ * For simplicity composed of points connected with straight lines
  */
 @JsonIgnoreProperties(['length'])
 class Path implements DataType {
+    /**
+     * Points defining this path. Unmodifiable
+     */
     final List<Offset> points
-    private final List<SegmentPosition> segments
+    /**
+     * Cached length of this path
+     */
     final BigDecimal length
+
+    private final List<SegmentPosition> segments
 
     @JsonCreator
     Path(@JsonProperty('points') @NotNull List<Offset> points) {
@@ -37,6 +44,11 @@ class Path implements DataType {
         this.segments = Collections.unmodifiableList(segments)
     }
 
+    /**
+     * Creates path from list of coordinates.
+     * @param coords coordinates in groups of 3 (x,y,z,x,y,z,x,y,z...)
+     * @return new path
+     */
     static Path of(List<BigDecimal>... coords) {
         new Path(coords.collect { new Offset(it[0], it[1], it[2]) })
     }

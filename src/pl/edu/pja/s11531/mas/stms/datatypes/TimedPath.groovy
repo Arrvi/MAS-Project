@@ -8,13 +8,22 @@ import java.time.LocalDateTime
 import java.time.Period
 
 /**
- * Created by kris on 1/30/17.
+ * Path on which object travels with constant speed
  */
 class TimedPath implements Serializable {
+    /**
+     * Path on which this object travels
+     */
     @NotNull
     final Path path
+    /**
+     * Time of phase zero
+     */
     @NotNull
     final LocalDateTime timeZero
+    /**
+     * Time needed to complete this path
+     */
     @NotNull
     final Period cycleDuration
 
@@ -28,10 +37,20 @@ class TimedPath implements Serializable {
         this.cycleDuration = cycleDuration
     }
 
+    /**
+     * Returns stationary path. Useful for star systems.
+     * @param position point at which object stays
+     * @return stationary path with period of 1 year (arbitrary value)
+     */
     static TimedPath stationary(Position position) {
         return new TimedPath(new Path([position, position]), position.time, Period.of(1, 0, 0))
     }
 
+    /**
+     * Calculates position on this path at given time
+     * @param time
+     * @return position on this path at given time
+     */
     Offset getPointAt(@NotNull LocalDateTime time) {
         def currCycleTime = Period.between(timeZero.toLocalDate(), time.toLocalDate())
         if (currCycleTime.isNegative()) {

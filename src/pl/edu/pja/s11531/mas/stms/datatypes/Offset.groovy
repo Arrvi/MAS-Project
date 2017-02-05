@@ -11,10 +11,21 @@ import javax.validation.constraints.NotNull
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Offset implements DataType {
+    /**
+     * X coordinate in AU
+     */
     @NotNull
     final BigDecimal x
+
+    /**
+     * Y coordinate in AU
+     */
     @NotNull
     final BigDecimal y
+
+    /**
+     * Z coordinate in AU
+     */
     @NotNull
     final BigDecimal z
 
@@ -50,10 +61,19 @@ class Offset implements DataType {
         return new Offset(x / divider, y / divider, z / divider)
     }
 
+    /**
+     * Returns magnitude of this vector
+     * @return magnitude of this vector in AU
+     */
     BigDecimal getLength() {
         Math.sqrt([x, y, z]*.pow(2).sum() as double)
     }
 
+    /**
+     * Calculates distance between points defined by this and given vector
+     * @param pos given vector
+     * @return distance in AU
+     */
     BigDecimal getDistanceTo(Offset pos) {
         (this - pos).length
     }

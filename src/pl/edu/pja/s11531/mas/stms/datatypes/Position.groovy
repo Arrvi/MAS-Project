@@ -12,6 +12,9 @@ import java.time.LocalDateTime
  * Let's pretend that's possible to measure.
  */
 class Position extends Offset {
+    /**
+     * Time at which this position was defined
+     */
     final LocalDateTime time
 
     @JsonCreator
