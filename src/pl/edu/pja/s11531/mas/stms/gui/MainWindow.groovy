@@ -5,6 +5,7 @@ import pl.edu.pja.s11531.mas.stms.gui.requests.RequestListScreen
 import pl.edu.pja.s11531.mas.stms.gui.requests.create.RequestSummaryScreen
 import pl.edu.pja.s11531.mas.stms.gui.requests.create.ShipChooserScreen
 import pl.edu.pja.s11531.mas.stms.gui.requests.create.WaypointChooserScreen
+import pl.edu.pja.s11531.mas.stms.persistence.PersistenceManager
 
 import javax.swing.*
 import java.awt.*
@@ -24,6 +25,7 @@ class MainWindow {
     RequestListScreen requestList
 
     MainWindow() {
+        PersistenceManager.loadConfig()
         buildGUI()
     }
 

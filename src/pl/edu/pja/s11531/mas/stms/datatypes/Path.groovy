@@ -1,6 +1,7 @@
 package pl.edu.pja.s11531.mas.stms.datatypes
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 import javax.validation.constraints.NotNull
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull
  *
  * For simplicity composed of points
  */
+@JsonIgnoreProperties(['length'])
 class Path implements DataType {
     final List<Offset> points
     private final List<SegmentPosition> segments
@@ -45,6 +47,9 @@ class Path implements DataType {
      * @return interpolated point
      */
     Offset getPointAt(double t) {
+        if (t == 0.0d || length == 0.0) {
+            return points[0]
+        }
         def desiredLength = t * length
         int segmentIndex = Collections.binarySearch(segments, desiredLength)
         if (segmentIndex < 0) {

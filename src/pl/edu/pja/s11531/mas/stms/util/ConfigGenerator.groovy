@@ -26,7 +26,7 @@ class ConfigGenerator {
     int systems = 10
     int maxPlanets = 10
     boolean generatePOI = true
-    double tunnelProb = 0.7
+    double tunnelProb = 0.4
     int minPrice = 10
     int maxPrice = 100
     BigDecimal universeSize = Distance.ly(1000000.0)

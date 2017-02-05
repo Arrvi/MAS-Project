@@ -39,7 +39,7 @@ class TimedPath implements Serializable {
                 currCycleTime += cycleDuration
             }
         } else {
-            while (currCycleTime > cycleDuration) {
+            while (!(currCycleTime - cycleDuration).negative) {
                 currCycleTime -= cycleDuration
             }
         }
@@ -47,6 +47,7 @@ class TimedPath implements Serializable {
     }
 
     private static double getDurationRatio(@NotNull Period numerator, @NotNull Period denominator) {
+        if (denominator.getDays() == 0) return 0;
         return numerator.getDays() / denominator.getDays()
     }
 }

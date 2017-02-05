@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
+import pl.edu.pja.s11531.mas.stms.constraints.ModelConstraintException
 
 import javax.validation.constraints.NotNull
 import java.lang.reflect.Field
@@ -26,6 +27,8 @@ abstract class LinkedObject {
     private static boolean autoIncrementId = true;
     private static int lastId = 0;
     protected int _id
+
+    private static final Set<Integer> usedIds = [];
 
     /**
      * Base constructor. Adds object to extent.
@@ -110,10 +113,15 @@ abstract class LinkedObject {
         "${this.class.simpleName}.$_id"
     }
 
-    void setId(String id) {
-        def segments = id.split("\\.")
+    void setId(String idString) {
+        def segments = idString.split("\\.")
         if (segments[0] != this.class.simpleName) throw new IllegalArgumentException("Setting id of different class");
-        _id = Integer.parseInt(segments[1])
+        def id = Integer.parseInt(segments[1])
+        if (usedIds.contains(id)) {
+            throw new ModelConstraintException("Unique id violation: $idString")
+        }
+        _id = id
+        usedIds << id
     }
 
     JsonNode getJsonNode(JsonNodeFactory factory) {
@@ -175,9 +183,11 @@ abstract class LinkedObject {
     static ArrayNode serializeExtentToJson(Class targetClass = null) {
         def factory = new JsonNodeFactory(false)
         ArrayNode jsonExtent = factory.arrayNode()
+        Set<String> ids = []
         new HashMap<Class<? extends LinkedObject>, List<LinkedObject>>(extent).each { k, v ->
-            v.findAll { targetClass == null || targetClass.isInstance(it) }.each {
+            v.findAll { targetClass == null || targetClass.isInstance(it) }.findAll { !ids.contains(it.id) }.each {
                 jsonExtent.add(it.getJsonNode(factory))
+                ids << it.id
             }
         }
 
@@ -187,16 +197,12 @@ abstract class LinkedObject {
     @SuppressWarnings("GroovyAssignabilityCheck")
     static void unserializeJson(ArrayNode nodes, ObjectMapper mapper) {
         nodes.elements().each { ObjectNode node ->
-            println "Reading object: $node"
             def className = (node.get('class') as TextNode).asText()
             def instance = LinkedObject.class.classLoader.loadClass(className)?.newInstance() as LinkedObject
             assert instance != null
 
-            println "Got instance of $className: $instance"
-
             def fields = node.get('fields') as ObjectNode
             fields.fieldNames().findAll { it != 'id' }.each { String name ->
-                println "Loading field $name: ${fields.get(name)}"
                 Class fieldType = getPropertyType(instance.class, name)
                 if (fieldType == null) {
                     throw new IllegalArgumentException("Cannot determine field's type: $name");
@@ -204,6 +210,7 @@ abstract class LinkedObject {
                 instance.setProperty(name, mapper.treeToValue(fields.get(name), fieldType))
             }
             instance.id = node.get('id').asText()
+            println "Deserialized $instance.id"
         }
 
         Map<String, LinkedObject> instanceMap = [:]
@@ -221,17 +228,17 @@ abstract class LinkedObject {
                 def link = links.get(name)
                 if (link instanceof TextNode) {
                     instance.setProperty(name, instanceMap[link.asText()])
+                    println "Linked $instance.id to ${instanceMap[link.asText()].id}"
                 } else if (link instanceof ArrayNode) {
                     List<LinkedObject> instances = []
                     link.each { instances.add(instanceMap[it.asText()]) }
                     instance.setProperty(name, instances)
+                    println "Linked $instance.id to ${instances*.id}"
                 } else {
                     throw new IllegalArgumentException("Unsupported link format: ${link.class}")
                 }
             }
         }
-
-        println "Deserialized successfully: $extent"
     }
 
     private static Class getPropertyType(Class cls, String name) {
