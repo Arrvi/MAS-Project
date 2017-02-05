@@ -1,6 +1,8 @@
 package pl.edu.pja.s11531.mas.stms.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import pl.edu.pja.s11531.mas.stms.constraints.IllegalTransitionException
+import pl.edu.pja.s11531.mas.stms.constraints.ModelConstraintException
 import pl.edu.pja.s11531.mas.stms.persistence.ConstantsProvider
 import pl.edu.pja.s11531.mas.stms.persistence.DatabaseObject
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
@@ -50,6 +52,18 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
         shipRequests.addAll(requests)
     }
 
+    void setStatus(Status newStatus) {
+        if (status != null) {
+            if (newStatus == null) {
+                throw new ModelConstraintException("Cannot set status to null")
+            }
+            if (!status.transitions.contains(newStatus)) {
+                throw new IllegalTransitionException(this, status.toString(), newStatus.toString())
+            }
+        }
+        status = newStatus
+    }
+
     @Override
     protected Map<Class, String> getLinkProperties() {
         return super.getLinkProperties() + [
@@ -71,7 +85,6 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
         INT_REPORTED(CANCELLED, PENDING);
 
         final Set<Status> transitions;
-        final static Status initial = RECEIVED;
 
         Status(Status... transitions) {
             this.transitions = Collections.unmodifiableSet(new HashSet(Arrays.asList(transitions)))
