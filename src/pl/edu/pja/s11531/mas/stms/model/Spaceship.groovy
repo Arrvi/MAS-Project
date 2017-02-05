@@ -20,4 +20,9 @@ class Spaceship extends LinkedObject implements DatabaseObject {
     String currentOwner
     @NotNull
     String currentCaptain
+
+    @Override
+    protected Map<Class, String> getLinkProperties() {
+        return super.getLinkProperties() + [(SpaceshipType.class): 'type']
+    }
 }

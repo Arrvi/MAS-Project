@@ -14,7 +14,7 @@ class ModelObjectFactory {
     }
 
     static Star star(StarSystem starSystem) {
-        new Star(starSystem: starSystem, trajectory: starSystem.trajectory, name: "Test star")
+        new Star(starSystem: starSystem, trajectory: starSystem?.trajectory ?: staticTrajectory(), name: "Test star")
     }
 
     static Planet planet(StarSystem starSystem) {

@@ -1,5 +1,6 @@
 package pl.edu.pja.s11531.mas.stms.persistence
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -7,11 +8,13 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 
+import javax.validation.constraints.NotNull
 import java.lang.reflect.Field
 
 /**
  * Association and link support.
  */
+@JsonIgnoreProperties(['id', 'linkProperties'])
 abstract class LinkedObject {
     /**
      * Map of object lists by their class. It defaults to empty list to avoid boilerplate checks while adding.
@@ -77,6 +80,32 @@ abstract class LinkedObject {
         extent[cls].clear()
     }
 
+    protected Map<Class, String> getLinkProperties() {
+        [:]
+    }
+
+    protected void linkInternal(LinkedObject object) {
+        String propertyName = linkProperties[object.class]
+        if (propertyName) {
+            def prop = this.getProperty(propertyName)
+            if (prop instanceof Collection) {
+                prop.add(object)
+            } else {
+                setProperty(propertyName, object)
+            }
+        }
+    }
+
+    private boolean linkingLock = false
+
+    void link(LinkedObject object, boolean linkBack = true) {
+        if (linkingLock) return;
+        linkingLock = true;
+        linkInternal(object)
+        if (linkBack) object.link(this, false)
+        linkingLock = false;
+    }
+
     String getId() {
         "${this.class.simpleName}.$_id"
     }
@@ -95,18 +124,23 @@ abstract class LinkedObject {
         node.set 'links', getLinksNode(factory)
     }
 
+    @SuppressWarnings("GroovyAssignabilityCheck")
     JsonNode getFieldsNode(JsonNodeFactory factory) {
         ObjectNode node = factory.objectNode()
+        def ignoredProperties = getIgnoredProperties(this.class)
         this.getProperties()
-                .findAll { String k, v -> !k.matches("[A-Z][A-Z_]+") }
+                .findAll { String k, v -> !(k.matches("[A-Z][A-Z_]+") || ignoredProperties.contains(k)) }
                 .findAll { k, v -> !(v instanceof LinkedObject || v instanceof Class) }
                 .each { String k, Object v -> node.set k, factory.pojoNode(v) }
         return node
     }
 
+    @SuppressWarnings("GroovyAssignabilityCheck")
     JsonNode getLinksNode(JsonNodeFactory factory) {
         ObjectNode node = factory.objectNode()
+        def ignoredProperties = getIgnoredProperties(this.class)
         this.getProperties()
+                .findAll { String k, v -> !ignoredProperties.contains(k) }
                 .findAll { k, v -> v instanceof LinkedObject }
                 .each { String k, LinkedObject v -> node.set k, factory.textNode(v.getId()) }
         return node
@@ -126,6 +160,7 @@ abstract class LinkedObject {
         return jsonExtent
     }
 
+    @SuppressWarnings("GroovyAssignabilityCheck")
     static void unserializeJson(ArrayNode nodes, ObjectMapper mapper) {
         nodes.elements().each { ObjectNode node ->
             println "Reading object: $node"
@@ -177,5 +212,17 @@ abstract class LinkedObject {
             return getPropertyType(cls.superclass, name)
         }
         return field.type
+    }
+
+    @NotNull
+    private static List<String> getIgnoredProperties(@NotNull Class cls) {
+        if (cls == Object.class) return []
+        List<String> props = []
+        JsonIgnoreProperties annot =
+                cls.declaredAnnotations.find { it instanceof JsonIgnoreProperties } as JsonIgnoreProperties
+        if (annot != null) {
+            props.addAll(annot.value())
+        }
+        return props + getIgnoredProperties(cls.superclass)
     }
 }

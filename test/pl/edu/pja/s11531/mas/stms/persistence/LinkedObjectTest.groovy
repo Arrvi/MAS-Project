@@ -39,7 +39,6 @@ class LinkedObjectTest extends Specification {
                 '"class":"pl.edu.pja.s11531.mas.stms.model.SpaceshipType",' +
                 '"id":"' + spaceShip.type.id + '",' +
                 '"fields":{' +
-                '"id":"' + spaceShip.type.id + '",' +
                 '"name":"Test type"},' +
                 '"links":{}},' +
                 '{"class":"pl.edu.pja.s11531.mas.stms.model.Spaceship",' +
@@ -47,7 +46,6 @@ class LinkedObjectTest extends Specification {
                 '"fields":{' +
                 '"currentCaptain":"Test captain",' +
                 '"currentOwner":"Test owner",' +
-                '"id":"' + spaceShip.id + '",' +
                 '"name":"Test ship",' +
                 '"mass":1000.0},' +
                 '"links":{"type":"' + spaceShip.type.id + '"}}]'
@@ -85,5 +83,17 @@ class LinkedObjectTest extends Specification {
 
         then:
         !LinkedObject.getExtent(Spaceship.class).empty
+    }
+
+    def "links"() {
+        setup:
+        def starSystem = ModelObjectFactory.starSystem()
+        def star = ModelObjectFactory.star(null)
+
+        when:
+        starSystem.link(star)
+
+        then:
+        star.starSystem == starSystem
     }
 }
