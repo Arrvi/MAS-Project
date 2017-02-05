@@ -57,7 +57,6 @@ class MapPanel extends JPanel {
             Set<Set<StarSystem>> systemPairs = []
             gates.each { systemPairs << new HashSet<>([it.starSystem, it.gate.starSystem]) }
             def time = LocalDateTime.now()
-            println systemPairs
             _tunnels = systemPairs
                     .collect { Set it -> it.toArray(new StarSystem[2]) }
                     .collect { StarSystem[] it -> it*.trajectory*.calculatePosition(time).toArray() } as Position[][]
