@@ -1,0 +1,155 @@
+[
+  {
+    "links": {"gates": [
+      "WarpGate.212",
+      "WarpGate.223"
+    ]},
+    "id": "WarpRequest.242",
+    "fields": {
+      "discount": null,
+      "warpDates": [],
+      "status": "RECEIVED"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.WarpRequest"
+  },
+  {
+    "links": {"gates": ["WarpGate.204"]},
+    "id": "WarpRequest.249",
+    "fields": {
+      "discount": null,
+      "warpDates": [],
+      "status": "RECEIVED"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.WarpRequest"
+  },
+  {
+    "links": {
+      "spaceship": "Spaceship.238",
+      "request": "WarpRequest.242"
+    },
+    "id": "SpaceshipWarpRequest.239",
+    "fields": {
+      "owner": "Spain",
+      "additionalMass": 0,
+      "crewCount": 1,
+      "captain": "cpt Sparrow",
+      "cargo": []
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest"
+  },
+  {
+    "links": {
+      "spaceship": "Spaceship.240",
+      "request": "WarpRequest.242"
+    },
+    "id": "SpaceshipWarpRequest.241",
+    "fields": {
+      "owner": "owner",
+      "additionalMass": 10,
+      "crewCount": 3,
+      "captain": "ctp",
+      "cargo": []
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest"
+  },
+  {
+    "links": {
+      "spaceship": "Spaceship.243",
+      "request": "WarpRequest.249"
+    },
+    "id": "SpaceshipWarpRequest.244",
+    "fields": {
+      "owner": "transport",
+      "additionalMass": 1,
+      "crewCount": 10,
+      "captain": "guard cpt",
+      "cargo": []
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest"
+  },
+  {
+    "links": {
+      "spaceship": "Spaceship.245",
+      "request": "WarpRequest.249"
+    },
+    "id": "SpaceshipWarpRequest.246",
+    "fields": {
+      "owner": "transport",
+      "additionalMass": 0,
+      "crewCount": 10,
+      "captain": "other guard",
+      "cargo": []
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest"
+  },
+  {
+    "links": {
+      "spaceship": "Spaceship.247",
+      "request": "WarpRequest.249"
+    },
+    "id": "SpaceshipWarpRequest.248",
+    "fields": {
+      "owner": "transport",
+      "additionalMass": 41355,
+      "crewCount": 203,
+      "captain": "Morgan Freeman",
+      "cargo": []
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest"
+  },
+  {
+    "links": {"type": "SpaceshipType.3"},
+    "id": "Spaceship.238",
+    "fields": {
+      "currentCaptain": "cpt Sparrow",
+      "currentOwner": "Spain",
+      "mass": 1000,
+      "name": "Tanker"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.Spaceship"
+  },
+  {
+    "links": {"type": "SpaceshipType.4"},
+    "id": "Spaceship.240",
+    "fields": {
+      "currentCaptain": "ctp",
+      "currentOwner": "owner",
+      "mass": 100,
+      "name": "Vessel"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.Spaceship"
+  },
+  {
+    "links": {"type": "SpaceshipType.1"},
+    "id": "Spaceship.243",
+    "fields": {
+      "currentCaptain": "guard cpt",
+      "currentOwner": "transport",
+      "mass": 1000,
+      "name": "Guard 1"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.Spaceship"
+  },
+  {
+    "links": {"type": "SpaceshipType.1"},
+    "id": "Spaceship.245",
+    "fields": {
+      "currentCaptain": "other guard",
+      "currentOwner": "transport",
+      "mass": 100,
+      "name": "Guard 2"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.Spaceship"
+  },
+  {
+    "links": {"type": "SpaceshipType.8"},
+    "id": "Spaceship.247",
+    "fields": {
+      "currentCaptain": "Morgan Freeman",
+      "currentOwner": "transport",
+      "mass": 10000,
+      "name": "Container ship"
+    },
+    "class": "pl.edu.pja.s11531.mas.stms.model.Spaceship"
+  }
+]
