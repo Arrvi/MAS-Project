@@ -63,14 +63,20 @@ class RequestSummaryScreen extends NamedScreen {
                     scrollPane(preferredSize: [0, 300]) {
                         routeList = builder.list()
                     }
-                    builder.button(text: "Save request", enabled: bind(source: this, 'saved', converter: {
-                        !it
-                    }), actionPerformed: {
-                        saveRequest()
-                    })
+                    builder.button(
+                            text: "Save request",
+                            enabled: bind(
+                                    source: this, 'saved',
+                                    converter: { !it }),
+                            actionPerformed: {
+                                saveRequest()
+                            })
                     separator()
                     hbox {
-                        builder.button(text: "Back", actionPerformed: { window.showScreen(window.shipChooser) })
+                        builder.button(text: "Back",
+                                enabled: bind(source: this, 'saved', converter: { !it }), actionPerformed: {
+                            window.showScreen(window.shipChooser)
+                        })
                         builder.button(text: "Continue", enabled: bind(source: this, 'saved'), actionPerformed: {
                             window.showScreen(window.menuScreen)
                         })

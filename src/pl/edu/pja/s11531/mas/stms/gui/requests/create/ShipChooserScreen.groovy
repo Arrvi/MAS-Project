@@ -54,10 +54,8 @@ class ShipChooserScreen extends NamedScreen {
                         availShipsList.addListSelectionListener({
                             if (availShipsList.selectedIndex >= 0) {
                                 shipModel.ship = availShipsList.selectedValue?.object
-                                shipModel.newShip = false
                             } else {
                                 shipModel.reset()
-                                shipModel.newShip = true
                             }
                         })
                     }
@@ -90,6 +88,7 @@ class ShipChooserScreen extends NamedScreen {
                             label("Crew count")
                             textField(
                                     id: 'crewCount',
+                                    enabled: bind(source: shipModel, 'newShip', converter: { !it }),
                                     text: bind(
                                             target: shipModel,
                                             'crewCount',
@@ -107,7 +106,10 @@ class ShipChooserScreen extends NamedScreen {
                                     enabled: bind(source: shipModel, 'newShip'),
                                     text: bind(target: shipModel, 'mass', mutual: true))
                             label("Additional mass")
-                            textField(id: 'additionalMass', text: bind(target: shipModel, 'additionalMass', mutual: true))
+                            textField(
+                                    id: 'additionalMass',
+                                    enabled: bind(source: shipModel, 'newShip', converter: { !it }),
+                                    text: bind(target: shipModel, 'additionalMass', mutual: true))
                             label("Captain")
                             textField(id: 'shipCaptain', text: bind(target: shipModel, 'captain', mutual: true))
                             label("Owner")
@@ -148,13 +150,17 @@ class ShipChooserScreen extends NamedScreen {
             showException(error)
             return;
         }
-        new Spaceship(
+        def ship = new Spaceship(
                 name: shipModel.name,
                 type: shipModel.type,
                 currentCaptain: shipModel.captain,
                 currentOwner: shipModel.owner,
                 mass: Double.parseDouble(shipModel.mass))
         refreshData()
+        def onList = (1..availShipsList.model.size())
+                .collect { availShipsList.model.getElementAt(it - 1) }
+                .find { it?.object == ship }
+        availShipsList.setSelectedValue(onList)
     }
 
     private void addShip() {
@@ -162,10 +168,12 @@ class ShipChooserScreen extends NamedScreen {
         def captain = shipModel.captain ?: ship?.currentCaptain
         def owner = shipModel.owner ?: ship?.currentOwner
         def crewCount = shipModel.crewCount
+        def addMass
         try {
             assert ship != null
             assert captain
             assert owner
+            addMass = Double.parseDouble(shipModel.additionalMass)
         } catch (AssertionError | NumberFormatException error) {
             showException(error)
             return;
@@ -175,7 +183,8 @@ class ShipChooserScreen extends NamedScreen {
                 crewCount: crewCount,
                 owner: owner,
                 captain: captain,
-                spaceship: ship
+                spaceship: ship,
+                additionalMass: addMass
         )
         selectedShips << request
         refreshData()
@@ -232,6 +241,8 @@ class ShipChooserScreen extends NamedScreen {
             setAdditionalMass "0"
             setCaptain ship.currentCaptain
             setOwner ship.currentOwner
+            setCrewCount 0
+            setNewShip false
         }
 
         def reset() {
@@ -242,6 +253,8 @@ class ShipChooserScreen extends NamedScreen {
             setAdditionalMass "0"
             setCaptain null
             setOwner null
+            setCrewCount 0
+            setNewShip true
         }
     }
 }
