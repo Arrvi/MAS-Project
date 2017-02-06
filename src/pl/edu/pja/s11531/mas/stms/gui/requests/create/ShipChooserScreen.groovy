@@ -7,6 +7,7 @@ import pl.edu.pja.s11531.mas.stms.gui.NamedScreen
 import pl.edu.pja.s11531.mas.stms.gui.util.LinkedObjectDecorator
 import pl.edu.pja.s11531.mas.stms.model.Spaceship
 import pl.edu.pja.s11531.mas.stms.model.SpaceshipType
+import pl.edu.pja.s11531.mas.stms.model.SpaceshipWarpRequest
 import pl.edu.pja.s11531.mas.stms.persistence.LinkedObject
 
 import javax.swing.*
@@ -18,6 +19,8 @@ import java.awt.*
 class ShipChooserScreen extends NamedScreen {
     private JPanel shipsPanel
     private JList availShipsList
+    private JList selectedShipsList
+    Set<SpaceshipWarpRequest> selectedShips = []
 
     ShipModel shipModel = new ShipModel()
 
@@ -38,7 +41,7 @@ class ShipChooserScreen extends NamedScreen {
                 vbox {
                     label("Selected ships")
                     scrollPane {
-                        builder.list()
+                        selectedShipsList = builder.list()
                     }
                 }
             }, BorderLayout.WEST
@@ -49,8 +52,13 @@ class ShipChooserScreen extends NamedScreen {
                     scrollPane {
                         availShipsList = builder.list(id: 'availShips', items: getDecoratedSpaceships())
                         availShipsList.addListSelectionListener({
-                            if (availShipsList.selectedIndex >= 0)
+                            if (availShipsList.selectedIndex >= 0) {
                                 shipModel.ship = availShipsList.selectedValue?.object
+                                shipModel.newShip = false
+                            } else {
+                                shipModel.reset()
+                                shipModel.newShip = true
+                            }
                         })
                     }
                     hbox {
@@ -58,36 +66,66 @@ class ShipChooserScreen extends NamedScreen {
                             gridLayout(cols: 2, rows: 0)
                             label("Type")
                             JComboBox<LinkedObjectDecorator> shipTypeCombo
-                            shipTypeCombo = comboBox(id: 'shipType', items: getDecoratedShipTypes(), selectedItem: bind(target: shipModel, 'type', mutual: true,
-                                    converter: { it?.object }, reverseConverter: { SpaceshipType type ->
-                                (0..shipTypeCombo.itemCount).collect { shipTypeCombo.getItemAt(it) }.find {
-                                    it?.object == type
-                                }
-                            }))
+                            shipTypeCombo = comboBox(
+                                    id: 'shipType',
+                                    items: getDecoratedShipTypes(),
+                                    enabled: bind(source: shipModel, 'newShip'),
+                                    selectedItem: bind(
+                                            target: shipModel,
+                                            'type',
+                                            mutual: true,
+                                            converter: { it?.object },
+                                            reverseConverter: { SpaceshipType type ->
+                                                (0..shipTypeCombo.itemCount).collect {
+                                                    shipTypeCombo.getItemAt(it)
+                                                }.find {
+                                                    it?.object == type
+                                                }
+                                            }))
                             label("Ship name")
-                            textField(id: 'shipName', text: builder.bind(target: shipModel, 'name', mutual: true))
+                            textField(
+                                    id: 'shipName',
+                                    enabled: bind(source: shipModel, 'newShip'),
+                                    text: bind(target: shipModel, 'name', mutual: true))
+                            label("Crew count")
+                            textField(
+                                    id: 'crewCount',
+                                    text: bind(
+                                            target: shipModel,
+                                            'crewCount',
+                                            mutual: true,
+                                            converter: { it.empty ? 0 : Integer.parseInt(it) },
+                                            reverseConverter: { String.valueOf(it) }))
 //                            label("Cargo")
 //                            textArea(id: 'cargo', text: bind(target: shipModel, 'cargo', mutual: true))
                         }
                         panel {
                             gridLayout(cols: 2, rows: 0)
                             label("Mass")
-                            panel {
-                                textField(id: 'shipMass', text: bind(target: shipModel, 'mass', mutual: true))
-                                label("+")
-                                textField(id: 'additionalMass', text: bind(target: shipModel, 'additionalMass', mutual: true))
-                            }
+                            textField(
+                                    id: 'shipMass',
+                                    enabled: bind(source: shipModel, 'newShip'),
+                                    text: bind(target: shipModel, 'mass', mutual: true))
+                            label("Additional mass")
+                            textField(id: 'additionalMass', text: bind(target: shipModel, 'additionalMass', mutual: true))
                             label("Captain")
                             textField(id: 'shipCaptain', text: bind(target: shipModel, 'captain', mutual: true))
                             label("Owner")
                             textField(id: 'shipOwner', text: bind(target: shipModel, 'owner', mutual: true))
                             button(text: 'Clear', actionPerformed: { shipModel.reset() })
-                            button(text: 'Create ship', actionPerformed: { createShip() })
+                            button(
+                                    text: bind(source: shipModel, 'newShip', converter: {
+                                        it ? 'Create ship' : 'Add ship'
+                                    }),
+                                    actionPerformed: { shipModel.newShip ? createShip() : addShip() })
                         }
                     }
                     hbox {
                         builder.button(text: "Back", actionPerformed: { window.showScreen(window.waypointChooser) })
-                        builder.button(text: "Continue", actionPerformed: { window.showScreen(window.requestSummary) })
+                        builder.button(text: "Continue", actionPerformed: {
+                            window.requestSummary.calculateRequest()
+                            window.showScreen(window.requestSummary)
+                        })
                     }
                 }
             }, BorderLayout.CENTER
@@ -96,6 +134,7 @@ class ShipChooserScreen extends NamedScreen {
 
     private void refreshData() {
         availShipsList.listData = getDecoratedSpaceships().toArray()
+        selectedShipsList.listData = selectedShips.collect { new LinkedObjectDecorator(it) }.toArray()
     }
 
     private void createShip() {
@@ -106,11 +145,7 @@ class ShipChooserScreen extends NamedScreen {
             assert shipModel.owner
             assert Double.parseDouble(shipModel.mass) > 0
         } catch (AssertionError | NumberFormatException error) {
-            JOptionPane.showMessageDialog(
-                    window.mainFrame,
-                    error.getMessage(),
-                    "Validation error",
-                    JOptionPane.WARNING_MESSAGE)
+            showException(error)
             return;
         }
         new Spaceship(
@@ -123,15 +158,46 @@ class ShipChooserScreen extends NamedScreen {
     }
 
     private void addShip() {
-        shipModel.name = "Add ship"
+        Spaceship ship = availShipsList.selectedValue?.object
+        def captain = shipModel.captain ?: ship?.currentCaptain
+        def owner = shipModel.owner ?: ship?.currentOwner
+        def crewCount = shipModel.crewCount
+        try {
+            assert ship != null
+            assert captain
+            assert owner
+        } catch (AssertionError | NumberFormatException error) {
+            showException(error)
+            return;
+        }
+
+        def request = new SpaceshipWarpRequest(
+                crewCount: crewCount,
+                owner: owner,
+                captain: captain,
+                spaceship: ship
+        )
+        selectedShips << request
+        refreshData()
+    }
+
+    private void showException(def e) {
+        JOptionPane.showMessageDialog(
+                window.mainFrame,
+                e.getMessage(),
+                "Validation error",
+                JOptionPane.WARNING_MESSAGE)
     }
 
     private static def getDecoratedShipTypes() {
         [null] + LinkedObject.getExtent(SpaceshipType.class).collect { new LinkedObjectDecorator(it) }
     }
 
-    private static def getDecoratedSpaceships() {
-        LinkedObject.getExtent(Spaceship.class).collect { new LinkedObjectDecorator(it) }
+    private def getDecoratedSpaceships() {
+        LinkedObject
+                .getExtent(Spaceship.class)
+                .findAll { !selectedShips.contains(it) }
+                .collect { new LinkedObjectDecorator(it) }
     }
 
     private static class ShipModel {
@@ -149,6 +215,10 @@ class ShipChooserScreen extends NamedScreen {
         String captain
         @Bindable
         String owner
+        @Bindable
+        boolean newShip = true
+        @Bindable
+        int crewCount
 
         def setShip(Spaceship ship) {
             if (ship == null) {

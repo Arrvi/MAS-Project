@@ -35,6 +35,7 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
     void setGates(List<WarpGate> newGates) {
         gates.clear()
         gates.addAll(newGates)
+        gates*.link(this, false)
     }
 
     void setWarpDates(List<LocalDateTime> newDates) {
