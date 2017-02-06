@@ -21,9 +21,6 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
     final List<WarpGate> gates = new ArrayList<>()
 
     @NotNull
-    final List<Spaceship> ships = new ArrayList<>()
-
-    @NotNull
     final List<SpaceshipWarpRequest> shipRequests = new ArrayList<>()
 
     Integer discount
@@ -43,11 +40,6 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
         warpDates.addAll(newDates)
     }
 
-    void setShips(List<Spaceship> newShips) {
-        ships.clear()
-        ships.addAll(newShips)
-    }
-
     void setShipRequest(List<SpaceshipWarpRequest> requests) {
         shipRequests.clear()
         shipRequests.addAll(requests)
@@ -63,6 +55,10 @@ class WarpRequest extends LinkedObject implements DatabaseObject {
             }
         }
         status = newStatus
+    }
+
+    List<Spaceship> getShips() {
+        shipRequests*.spaceship
     }
 
     @Override
